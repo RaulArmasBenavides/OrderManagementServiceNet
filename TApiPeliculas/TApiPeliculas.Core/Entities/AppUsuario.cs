@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace TApiPeliculas.Modelos
+namespace TApiPeliculas.Core.Entities
 {
     public class AppUsuario : IdentityUser
     {

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace TApiPeliculas.Modelos
+namespace TApiPeliculas.Core.Entities
 {
     public class RespuestaAPI
     {

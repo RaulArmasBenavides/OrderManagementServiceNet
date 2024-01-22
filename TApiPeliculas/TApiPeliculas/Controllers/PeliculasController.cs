@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using TApiPeliculas.Modelos;
+using TApiPeliculas.Core.Entities;
 using TApiPeliculas.Modelos.Dtos;
-using TApiPeliculas.Repositorio.IRepositorio;
 
 namespace TApiPeliculas.Controllers
 {

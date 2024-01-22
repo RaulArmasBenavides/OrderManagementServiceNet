@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TApiPeliculas.Data;
-using TApiPeliculas.Modelos;
-using TApiPeliculas.Repositorio.IRepositorio;
+﻿using TApiPeliculas.Core.Entities;
 
 namespace TApiPeliculas.Repositorio
 {

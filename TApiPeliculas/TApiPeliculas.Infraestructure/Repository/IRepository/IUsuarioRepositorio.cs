@@ -1,7 +1,8 @@
-﻿using TApiPeliculas.Modelos;
-using TApiPeliculas.Models.Dtos;
+﻿
 
-namespace TApiPeliculas.Repositorio.IRepositorio
+using TApiPeliculas.Core.Entities;
+
+namespace TApiPeliculas.Infraestructure.Repository.IRepository
 {
     public interface IUsuarioRepositorio
     {

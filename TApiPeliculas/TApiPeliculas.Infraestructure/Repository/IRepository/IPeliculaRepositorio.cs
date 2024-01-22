@@ -1,6 +1,8 @@
-﻿using TApiPeliculas.Modelos;
+﻿
 
-namespace TApiPeliculas.Repositorio.IRepositorio
+using TApiPeliculas.Core.Entities;
+
+namespace TApiPeliculas.Infraestructure.Repository.IRepository
 {
     public interface IPeliculaRepositorio
     {

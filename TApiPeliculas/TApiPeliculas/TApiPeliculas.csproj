@@ -36,4 +36,8 @@
     <Folder Include="wwwroot\fotos\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TApiPeliculas.Core\TApiPeliculas.Core.csproj" />
+  </ItemGroup>
+
 </Project>

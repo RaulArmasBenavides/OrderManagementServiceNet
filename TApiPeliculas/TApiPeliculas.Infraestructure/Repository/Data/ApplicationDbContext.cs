@@ -1,10 +1,22 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using TApiPeliculas.Modelos;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Text;
+using System.Threading.Tasks;
+using TApiPeliculas.Core.Entities;
 
-namespace TApiPeliculas.Data
+namespace TApiPeliculas.Infraestructure.Repository.Data
 {
+    //public class ApplicationDbContext
+    //{
+    //    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    //    {
+    //    }
+    //}
+
     public class ApplicationDbContext : IdentityDbContext<AppUsuario>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TApiPeliculas.Modelos
+namespace TApiPeliculas.Core.Entities
 {
     public class Usuario
     {

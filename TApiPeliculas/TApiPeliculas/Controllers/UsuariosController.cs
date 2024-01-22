@@ -1,15 +1,8 @@
 ﻿using AutoMapper;
-using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.IdentityModel.Tokens;
 using System.Net;
-using TApiPeliculas.Modelos;
-using TApiPeliculas.Modelos.Dtos;
 using TApiPeliculas.Models.Dtos;
-using TApiPeliculas.Repositorio.IRepositorio;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TApiPeliculas.Controllers
 {
