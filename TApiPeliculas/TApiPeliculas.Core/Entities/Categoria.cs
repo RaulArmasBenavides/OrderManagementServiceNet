@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace TApiPeliculas.Core.Entities
+{ 
     public class Categoria
     {
         [Key]

@@ -1,17 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using TApiPeliculas.Data;
-using TApiPeliculas.Modelos;
-using TApiPeliculas.Models.Dtos;
-using TApiPeliculas.Repositorio.IRepositorio;
-using XAct.Library.Settings;
-using XAct.Users;
-using XSystem.Security.Cryptography;
+using TApiPeliculas.Core.Entities;
+using TApiPeliculas.Infraestructure.Repository.Data;
+using TApiPeliculas.Infraestructure.Repository.IRepository;
 
 namespace TApiPeliculas.Repositorio
 {
@@ -53,54 +45,54 @@ namespace TApiPeliculas.Repositorio
             return false;
         }
 
-        public async Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto)
-        {
-            //Encriptar password a md5  antes de enviar la consulta
-            //var passwordEncriptado = obtenermd5(usuarioLoginDto.Password);
+        //public async Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto)
+        //{
+        //    //Encriptar password a md5  antes de enviar la consulta
+        //    //var passwordEncriptado = obtenermd5(usuarioLoginDto.Password);
 
-            var usuario = _bd.AppUsuario.FirstOrDefault
-                (u => u.UserName.ToLower() == usuarioLoginDto.NombreUsuario.ToLower());
+        //    var usuario = _bd.AppUsuario.FirstOrDefault
+        //        (u => u.UserName.ToLower() == usuarioLoginDto.NombreUsuario.ToLower());
 
-            bool isValid = await _userManager.CheckPasswordAsync(usuario, usuarioLoginDto.Password);
+        //    bool isValid = await _userManager.CheckPasswordAsync(usuario, usuarioLoginDto.Password);
 
-            //Validamos si el usuario no existe con la combinación de usuario y contraseña correcta
-            if (usuario == null || isValid == false)
-            {
-                //return null;
-                return new UsuarioLoginRespuestaDto()
-                {
-                    Token = "",
-                    Usuario = null
-                };
-            }
+        //    //Validamos si el usuario no existe con la combinación de usuario y contraseña correcta
+        //    if (usuario == null || isValid == false)
+        //    {
+        //        //return null;
+        //        return new UsuarioLoginRespuestaDto()
+        //        {
+        //            Token = "",
+        //            Usuario = null
+        //        };
+        //    }
 
-            //Aquí existe el usuario entonces podemos procesar el login
-            var roles = await _userManager.GetRolesAsync(usuario);
-            var manejadorToken = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(claveSecreta);
+        //    //Aquí existe el usuario entonces podemos procesar el login
+        //    var roles = await _userManager.GetRolesAsync(usuario);
+        //    var manejadorToken = new JwtSecurityTokenHandler();
+        //    var key = Encoding.ASCII.GetBytes(claveSecreta);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, usuario.UserName.ToString()),
-                    new Claim(ClaimTypes.Role, roles.FirstOrDefault())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+        //    var tokenDescriptor = new SecurityTokenDescriptor
+        //    {
+        //        Subject = new ClaimsIdentity(new Claim[]
+        //        {
+        //            new Claim(ClaimTypes.Name, usuario.UserName.ToString()),
+        //            new Claim(ClaimTypes.Role, roles.FirstOrDefault())
+        //        }),
+        //        Expires = DateTime.UtcNow.AddDays(7),
+        //        SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        //    };
 
-            var token = manejadorToken.CreateToken(tokenDescriptor);
+        //    var token = manejadorToken.CreateToken(tokenDescriptor);
 
 
-            UsuarioLoginRespuestaDto usuarioLoginRespuestaDto = new UsuarioLoginRespuestaDto()
-            {
-                Token = manejadorToken.WriteToken(token),
-                Usuario = _mapper.Map<UsuarioDatosDto>(usuario),
+        //    UsuarioLoginRespuestaDto usuarioLoginRespuestaDto = new UsuarioLoginRespuestaDto()
+        //    {
+        //        Token = manejadorToken.WriteToken(token),
+        //        Usuario = _mapper.Map<UsuarioDatosDto>(usuario),
 
-            };
-            return usuarioLoginRespuestaDto;
-        }
+        //    };
+        //    return usuarioLoginRespuestaDto;
+        //}
 
 
         public async Task<UsuarioDatosDto> Registro(UsuarioRegistroDto usuarioRegistroDto)

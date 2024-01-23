@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TApiPeliculas.Application.Dtos;
+using TApiPeliculas.Application.Interfaces;
+using TApiPeliculas.Application.Services;
 using TApiPeliculas.Core.Entities;
-using TApiPeliculas.Modelos.Dtos;
 
 namespace TApiPeliculas.Controllers
 {
@@ -10,11 +12,11 @@ namespace TApiPeliculas.Controllers
     [ApiController]
     public class PeliculasController : ControllerBase
     {
-        private readonly IPeliculaRepositorio _pelRepo;
+        private readonly IPeliculaService _pelRepo;
         //private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IMapper _mapper;
 
-        public PeliculasController(IPeliculaRepositorio pelRepo, IMapper mapper, IWebHostEnvironment hostingEnvironment)
+        public PeliculasController(IPeliculaService pelRepo, IMapper mapper, IWebHostEnvironment hostingEnvironment)
         {
             _pelRepo = pelRepo;
             _mapper = mapper;

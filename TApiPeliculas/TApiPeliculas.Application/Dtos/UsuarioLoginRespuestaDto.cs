@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using TApiPeliculas.Modelos;
+ 
 
-namespace TApiPeliculas.Models.Dtos
+namespace TApiPeliculas.Application.Dtos
 {
     public class UsuarioLoginRespuestaDto
     {

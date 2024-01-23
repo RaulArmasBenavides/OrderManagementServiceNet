@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TApiPeliculas.Models.Dtos
+namespace TApiPeliculas.Application.Dtos
 {
     public class UsuarioDto
     {

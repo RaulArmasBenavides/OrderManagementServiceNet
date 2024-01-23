@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using TApiPeliculas.Models.Dtos;
+using TApiPeliculas.Application.Dtos;
+using TApiPeliculas.Application.Interfaces;
 
 namespace TApiPeliculas.Controllers
 {
@@ -11,11 +12,11 @@ namespace TApiPeliculas.Controllers
     public class UsuariosController : ControllerBase
     {
 
-        private readonly IUsuarioRepositorio _usRepo;
+        private readonly IUsuarioService _usRepo;
         protected RespuestaAPI _respuestaApi;
         private readonly IMapper _mapper;
 
-        public UsuariosController(IUsuarioRepositorio usRepo, IMapper mapper)
+        public UsuariosController(IUsuarioService usRepo, IMapper mapper)
         {
             _usRepo = usRepo;
             this._respuestaApi = new();
@@ -78,7 +79,7 @@ namespace TApiPeliculas.Controllers
             return Ok(_respuestaApi);
         }
 
-        //[AllowAnonymous]
+
         [HttpPost("registro")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

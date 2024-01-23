@@ -33,10 +33,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Middlewares\" />
     <Folder Include="wwwroot\fotos\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TApiPeliculas.Application\TApiPeliculas.Application.csproj" />
     <ProjectReference Include="..\TApiPeliculas.Core\TApiPeliculas.Core.csproj" />
   </ItemGroup>
 

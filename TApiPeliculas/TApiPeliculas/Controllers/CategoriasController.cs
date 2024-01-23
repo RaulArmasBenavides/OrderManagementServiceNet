@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TApiPeliculas.Application.Dtos;
+using TApiPeliculas.Application.Interfaces;
 using TApiPeliculas.Core.Entities;
-using TApiPeliculas.Modelos.Dtos;
 
 namespace TApiPeliculas.Controllers
 {
@@ -13,19 +14,11 @@ namespace TApiPeliculas.Controllers
     //[ProducesResponseType(StatusCodes.Status400BadRequest)]
     public class CategoriasController : ControllerBase
     {
-        //[HttpGet]
-        //public IEnumerable<CategoriaDto> GetCategorias()
-        //{
-        //    return new List<CategoriaDto> { 
-        //        new CategoriaDto { Id = 1, Nombre="Acción" },
-        //        new CategoriaDto { Id = 2, Nombre="Suspenso" }
-        //    };
-        //}
 
-        private readonly ICategoriaRepositorio _ctRepo;
+        private readonly ICategoriaService _ctRepo;
         private readonly IMapper _mapper;
 
-        public CategoriasController(ICategoriaRepositorio ctRepo, IMapper mapper)
+        public CategoriasController(ICategoriaService ctRepo, IMapper mapper)
         {
             _ctRepo = ctRepo;
             _mapper = mapper;
