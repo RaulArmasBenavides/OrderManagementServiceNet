@@ -15,6 +15,7 @@ namespace TApiPeliculas.Controllers
 
         private readonly IUsuarioService _usRepo;
         protected RespuestaAPI _respuestaApi;
+        private IConfiguration _config;
         private readonly IMapper _mapper;
 
         public UsuariosController(IUsuarioService usRepo, IMapper mapper)
@@ -65,7 +66,7 @@ namespace TApiPeliculas.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] UsuarioLoginDto usuarioLoginDto)
         {
-            var respuestaLogin = await _usRepo.Login(usuarioLoginDto);
+            var respuestaLogin = await _usRepo.Login(usuarioLoginDto, _config.GetValue<string>("ApiSettings:Secreta"));
             if (respuestaLogin.Usuario == null || string.IsNullOrEmpty(respuestaLogin.Token))
             {
                 _respuestaApi.StatusCode = HttpStatusCode.BadRequest;

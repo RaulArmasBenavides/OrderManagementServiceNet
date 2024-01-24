@@ -1,4 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using TApiPeliculas.Infraestructure.Repository;
+using TApiPeliculas.Infraestructure.Repository.Data;
+using TApiPeliculas.Infraestructure.Repository.IRepository;
+using TApiPeliculas.Infraestructure.Repository.UnitOfWork;
 
 namespace TApiPeliculas.Infraestructure
 {
@@ -12,7 +17,7 @@ namespace TApiPeliculas.Infraestructure
                   b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)), ServiceLifetime.Scoped);
             //services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<IWorkContainer, WorkContainer>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
     }

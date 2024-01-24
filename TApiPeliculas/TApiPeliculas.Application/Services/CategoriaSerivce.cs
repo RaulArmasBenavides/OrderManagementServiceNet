@@ -1,19 +1,21 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TApiPeliculas.Core.Entities;
+using TApiPeliculas.Infraestructure.Repository.UnitOfWork;
 
 namespace TApiPeliculas.Application.Services
 {
     public class CategoriaSerivce
     {
 
-        private readonly IWorkContainer _contenedorTrabajo;
+        private readonly IUnitOfWork _contenedorTrabajo;
         private readonly IMapper _mapper;
 
-        public CategoriaSerivce(IWorkContainer unitOfWork, IMapper mapper)
+        public CategoriaSerivce(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _contenedorTrabajo = unitOfWork;
             _mapper = mapper;

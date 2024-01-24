@@ -1,7 +1,4 @@
-﻿using TApiPeliculas.Modelos.Dtos;
-using TApiPeliculas.Modelos;
-using AutoMapper;
-using TApiPeliculas.Models.Dtos;
+﻿using AutoMapper;
 
 namespace TApiPeliculas.PeliculasMappers
 {

@@ -1,19 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using TApiPeliculas.Data;
-using TApiPeliculas.Repositorio.IRepositorio;
 using TApiPeliculas.Repositorio;
 using TApiPeliculas.PeliculasMappers;
-using AutoMapper;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using FluentAssertions.Common;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using TApiPeliculas.Modelos;
+using TApiPeliculas.Infraestructure.Repository.IRepository;
+using TApiPeliculas.Core.Entities;
+using TApiPeliculas.Infraestructure.Repository.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -129,11 +125,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-//Soporte para CORS
 app.UseCors("PolicyCors");
-
-
 //Se debe agregar la autenticación en la parte del curso dedicado a la autenticación
 app.UseAuthentication();
 app.UseAuthorization();

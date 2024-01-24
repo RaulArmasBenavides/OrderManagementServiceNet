@@ -1,14 +1,15 @@
 ﻿using TApiPeliculas.Core.Entities;
+using TApiPeliculas.Infraestructure.Repository;
 using TApiPeliculas.Infraestructure.Repository.Data;
 using TApiPeliculas.Infraestructure.Repository.IRepository;
 
 namespace TApiPeliculas.Repositorio
 {
-    public class PeliculaRepositorio : IPeliculaRepositorio
+    public class PeliculaRepositorio : Repository<Pelicula>,IPeliculaRepositorio
     {
         private readonly ApplicationDbContext _bd;
 
-        public PeliculaRepositorio(ApplicationDbContext bd)
+        public PeliculaRepositorio(ApplicationDbContext bd) : base(bd)
         {
             _bd = bd;
         }
