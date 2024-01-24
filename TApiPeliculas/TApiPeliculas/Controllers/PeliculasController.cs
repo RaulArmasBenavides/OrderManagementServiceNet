@@ -150,7 +150,7 @@ namespace TApiPeliculas.Controllers
 
             var pelicula = _mapper.Map<Pelicula>(peliculaDto);
 
-            if (!_pelRepo.ActualizarPelicula(pelicula))
+            if (!_pelRepo.UpdateMovieAsync(pelicula))
             {
                 ModelState.AddModelError("", $"Algo salio mal actualizando el registro{pelicula.Nombre}");
                 return StatusCode(500, ModelState);
@@ -172,7 +172,7 @@ namespace TApiPeliculas.Controllers
 
             var pelicula = _pelRepo.GetPelicula(peliculaId);
 
-            if (!_pelRepo.BorrarPelicula(pelicula))
+            if (!_pelRepo.DeleteMovieAsync(pelicula))
             {
                 ModelState.AddModelError("", $"Algo salio mal borrando el registro{pelicula.Nombre}");
                 return StatusCode(500, ModelState);

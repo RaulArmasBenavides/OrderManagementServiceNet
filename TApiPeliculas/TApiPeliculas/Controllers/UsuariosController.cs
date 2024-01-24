@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using TApiPeliculas.Application.Dtos;
 using TApiPeliculas.Application.Interfaces;
+using TApiPeliculas.Core.Entities;
 
 namespace TApiPeliculas.Controllers
 {
@@ -45,7 +46,7 @@ namespace TApiPeliculas.Controllers
         [HttpGet("{usuarioId:int}", Name = "GetUsuario")]
         public IActionResult GetUsuario(int usuarioId)
         {
-            var itemUsuario = _usRepo.GetUsuario(usuarioId);
+            var itemUsuario = _usRepo.GetUsuario(usuarioId.ToString());
 
             if (itemUsuario == null)
             {
@@ -86,27 +87,29 @@ namespace TApiPeliculas.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
         public async Task<IActionResult> Registro([FromBody] UsuarioRegistroDto usuarioRegistroDto)
         {
-            bool validarNombreUsuarioUnico = _usRepo.IsUniqueUser(usuarioRegistroDto.NombreUsuario);
-            if (!validarNombreUsuarioUnico)
-            {
-                _respuestaApi.StatusCode = HttpStatusCode.BadRequest;
-                _respuestaApi.IsSuccess = false;
-                _respuestaApi.ErrorMessages.Add("El nombre de usuario ya existe");
-                return BadRequest(_respuestaApi);
-            }
 
-            var usuario = await _usRepo.Registro(usuarioRegistroDto);
-            if (usuario == null) 
-            {
-                _respuestaApi.StatusCode = HttpStatusCode.BadRequest;
-                _respuestaApi.IsSuccess = false;
-                _respuestaApi.ErrorMessages.Add("Error en el registro");
-                return BadRequest(_respuestaApi);
-            }
+            var rptaservice = await _usRepo.Registro(usuarioRegistroDto);
+            //bool validarNombreUsuarioUnico = _usRepo.IsUniqueUser(usuarioRegistroDto.NombreUsuario);
+            //if (!validarNombreUsuarioUnico)
+            //{
+            //    _respuestaApi.StatusCode = HttpStatusCode.BadRequest;
+            //    _respuestaApi.IsSuccess = false;
+            //    _respuestaApi.ErrorMessages.Add("El nombre de usuario ya existe");
+            //    return BadRequest(_respuestaApi);
+            //}
 
-            _respuestaApi.StatusCode = HttpStatusCode.OK;
-            _respuestaApi.IsSuccess = true;
-            return Ok(_respuestaApi);
+            //var usuario = await _usRepo.Registro(usuarioRegistroDto);
+            //if (usuario == null) 
+            //{
+            //    _respuestaApi.StatusCode = HttpStatusCode.BadRequest;
+            //    _respuestaApi.IsSuccess = false;
+            //    _respuestaApi.ErrorMessages.Add("Error en el registro");
+            //    return BadRequest(_respuestaApi);
+            //}
+
+            //_respuestaApi.StatusCode = HttpStatusCode.OK;
+            //_respuestaApi.IsSuccess = true;
+            return Ok(rptaservice);
         }
     }
 }
