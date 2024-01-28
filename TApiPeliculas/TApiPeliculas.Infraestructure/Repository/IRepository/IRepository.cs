@@ -29,5 +29,7 @@ namespace TApiPeliculas.Infraestructure.Repository.IRepository
         void Remove(T entity);
 
         IEnumerable<object> GetAllSelectLoading();
+
+        bool Exists(Expression<Func<T, bool>> filter);
     }
 }

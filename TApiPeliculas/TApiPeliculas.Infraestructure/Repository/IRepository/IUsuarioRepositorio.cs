@@ -9,7 +9,8 @@ namespace TApiPeliculas.Infraestructure.Repository.IRepository
         ICollection<Usuario> GetUsuarios();
         Usuario GetUsuario(int usuarioId);
         bool IsUniqueUser(string usuario);
-        Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto);
-        Task<UsuarioDatosDto> Registro(UsuarioRegistroDto usuarioRegistroDto);
+        //Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto);
+        //Task<UsuarioDatosDto> Registro(UsuarioRegistroDto usuarioRegistroDto);
+        AppUsuario GetUsuarioByUserName(string userName);
     }
 }

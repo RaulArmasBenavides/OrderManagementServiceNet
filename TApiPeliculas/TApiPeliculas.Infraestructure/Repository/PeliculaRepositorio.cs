@@ -2,7 +2,8 @@
 using TApiPeliculas.Infraestructure.Repository;
 using TApiPeliculas.Infraestructure.Repository.Data;
 using TApiPeliculas.Infraestructure.Repository.IRepository;
-
+using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 namespace TApiPeliculas.Repositorio
 {
     public class PeliculaRepositorio : Repository<Pelicula>,IPeliculaRepositorio

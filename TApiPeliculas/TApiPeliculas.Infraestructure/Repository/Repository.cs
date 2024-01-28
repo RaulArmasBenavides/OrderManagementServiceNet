@@ -76,5 +76,9 @@ namespace TApiPeliculas.Infraestructure.Repository
         {
             _dbset.Remove(entity);
         }
+        public bool Exists(Expression<Func<T, bool>> filter)
+        {
+            return _dbset.Any(filter);
+        }
     }
 }

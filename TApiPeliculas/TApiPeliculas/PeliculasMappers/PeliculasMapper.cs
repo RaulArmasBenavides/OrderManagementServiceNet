@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using TApiPeliculas.Application.Dtos;
+using TApiPeliculas.Core.Entities;
 
 namespace TApiPeliculas.PeliculasMappers
 {

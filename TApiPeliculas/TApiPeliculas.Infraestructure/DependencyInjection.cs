@@ -4,7 +4,7 @@ using TApiPeliculas.Infraestructure.Repository;
 using TApiPeliculas.Infraestructure.Repository.Data;
 using TApiPeliculas.Infraestructure.Repository.IRepository;
 using TApiPeliculas.Infraestructure.Repository.UnitOfWork;
-
+using Microsoft.EntityFrameworkCore;
 namespace TApiPeliculas.Infraestructure
 {
     public static class DependencyInjection

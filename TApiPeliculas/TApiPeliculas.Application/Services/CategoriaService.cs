@@ -4,18 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TApiPeliculas.Application.Interfaces;
 using TApiPeliculas.Core.Entities;
 using TApiPeliculas.Infraestructure.Repository.UnitOfWork;
 
 namespace TApiPeliculas.Application.Services
 {
-    public class CategoriaSerivce
+    public class CategoriaService : ICategoriaService
     {
 
         private readonly IUnitOfWork _contenedorTrabajo;
         private readonly IMapper _mapper;
 
-        public CategoriaSerivce(IUnitOfWork unitOfWork, IMapper mapper)
+        public CategoriaService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _contenedorTrabajo = unitOfWork;
             _mapper = mapper;
@@ -36,6 +37,11 @@ namespace TApiPeliculas.Application.Services
         {
             _contenedorTrabajo.Categorias.Update(cat);
             await _contenedorTrabajo.SaveChangesAsync();
+        }
+
+        public IEnumerable<object> GetAllCategories()
+        {
+            throw new NotImplementedException();
         }
     }
 }

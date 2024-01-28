@@ -7,7 +7,7 @@ using TApiPeliculas.Infraestructure.Repository.IRepository;
 
 namespace TApiPeliculas.Infraestructure.Repository.UnitOfWork
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
        
             ICategoriaRepositorio Categorias { get; }

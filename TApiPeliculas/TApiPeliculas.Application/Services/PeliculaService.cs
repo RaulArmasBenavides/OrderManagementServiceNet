@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TApiPeliculas.Application.Interfaces;
 using TApiPeliculas.Core.Entities;
 using TApiPeliculas.Infraestructure.Repository.UnitOfWork;
 
 namespace TApiPeliculas.Application.Services
 {
-    public class PeliculaService
+    public class PeliculaService : IPeliculaService
     {
         private readonly IUnitOfWork _contenedorTrabajo;
         private readonly IMapper _mapper;
@@ -48,6 +49,10 @@ namespace TApiPeliculas.Application.Services
         public Pelicula GetPelicula(int id)
         {
             return _contenedorTrabajo.Peliculas.Get(id);
+        }
+        public bool ExistePelicula(int id)
+        {
+            return _contenedorTrabajo.Peliculas.Exists(movie => movie.Id == id);
         }
     }
 }

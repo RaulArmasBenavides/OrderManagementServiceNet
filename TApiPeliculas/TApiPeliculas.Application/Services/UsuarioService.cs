@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -11,7 +13,6 @@ using TApiPeliculas.Application.Dtos;
 using TApiPeliculas.Application.Interfaces;
 using TApiPeliculas.Core.Entities;
 using TApiPeliculas.Infraestructure.Repository.UnitOfWork;
-
 namespace TApiPeliculas.Application.Services
 {
     public class UsuarioService : IUsuarioService
@@ -42,12 +43,12 @@ namespace TApiPeliculas.Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto, string SecretKey)
+        public async Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto, string SecretKey)
         {
             var usuario = _contenedorTrabajo.Usuarios.GetUsuarioByUserName(usuarioLoginDto.NombreUsuario.ToLower());
             bool isValid = await _userManager.CheckPasswordAsync(usuario, usuarioLoginDto.Password);
             //Validamos si el usuario no existe con la combinación de usuario y contraseña correcta
-            if (usuario == null || isValid == false)
+            if (usuario == null || !isValid )
             {
                 //return null;
                 return new UsuarioLoginRespuestaDto()
@@ -66,8 +67,8 @@ namespace TApiPeliculas.Application.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, usuario.UserName.ToString()),
-                    new Claim(ClaimTypes.Role, roles.FirstOrDefault())
+                    new(ClaimTypes.Name, usuario.UserName.ToString()),
+                    new(ClaimTypes.Role, roles.FirstOrDefault())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
