@@ -1,6 +1,6 @@
 ﻿using TApiPeliculas.Core.Entities;
 
-namespace TApiPeliculas.Infraestructure.Repository.IRepository
+namespace TApiPeliculas.Core.IRepository
 {
     public interface ICategoriaRepositorio
     {
