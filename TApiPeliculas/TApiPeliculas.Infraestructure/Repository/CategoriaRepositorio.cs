@@ -1,4 +1,5 @@
 ﻿using TApiPeliculas.Core.Entities;
+using TApiPeliculas.Core.IRepository;
 using TApiPeliculas.Infraestructure.Repository;
 using TApiPeliculas.Infraestructure.Repository.Data;
 using TApiPeliculas.Infraestructure.Repository.IRepository;

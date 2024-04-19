@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using TApiPeliculas.Infraestructure.Repository.IRepository;
 using TApiPeliculas.Core.Entities;
 using TApiPeliculas.Infraestructure.Repository.Data;
+using TApiPeliculas.Core.IRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 

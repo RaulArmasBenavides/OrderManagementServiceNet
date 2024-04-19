@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TApiPeliculas.Core.IRepository;
 using TApiPeliculas.Infraestructure.Repository.Data;
 using TApiPeliculas.Infraestructure.Repository.IRepository;
 using TApiPeliculas.Repositorio;

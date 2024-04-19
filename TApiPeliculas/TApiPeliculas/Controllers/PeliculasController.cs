@@ -28,7 +28,7 @@ namespace TApiPeliculas.Controllers
         [HttpGet]
         public IActionResult GetPeliculas()
         {
-            var listaPeliculas = _pelRepo.GetPeliculas();
+            var listaPeliculas = _pelRepo.GetAllPeliculas();
 
             var listaPeliculasDto = new List<PeliculaDto>();
 
@@ -60,7 +60,7 @@ namespace TApiPeliculas.Controllers
         [HttpGet("GetPeliculasEnCategoria/{categoriaId:int}")]
         public IActionResult GetPeliculasEnCategoria(int categoriaId)
         {
-            var listaPelicula = _pelRepo.GetPeliculasEnCategoria(categoriaId);
+            var listaPelicula = new List<object>();//_pelRepo.GetPeliculasEnCategoria(categoriaId);
 
             if (listaPelicula == null)
             {
@@ -81,20 +81,21 @@ namespace TApiPeliculas.Controllers
         [HttpGet("Buscar")]
         public IActionResult Buscar(string nombre)
         {
-            try
-            {
-                var resultado = _pelRepo.BuscarPelicula(nombre);
-                if (resultado.Any())
-                {
-                    return Ok(resultado);
-                }
+            //try
+            //{
+            //    var resultado = _pelRepo.BuscarPelicula(nombre);
+            //    if (resultado.Any())
+            //    {
+            //        return Ok(resultado);
+            //    }
 
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error recuperando datos de la aplicación");
-            }
+            //    return NotFound();
+            //}
+            //catch (Exception)
+            //{
+            //    return StatusCode(StatusCodes.Status500InternalServerError, "Error recuperando datos de la aplicación");
+            //}
+            return Ok();
         }
 
         [Authorize(Roles = "admin")]
@@ -116,19 +117,19 @@ namespace TApiPeliculas.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (_pelRepo.ExistePelicula(peliculaDto.Nombre))
-            {
-                ModelState.AddModelError("", "La película ya existe");
-                return StatusCode(404, ModelState);
-            }            
+            //if (_pelRepo.ExistePelicula(peliculaDto.Nombre))
+            //{
+            //    ModelState.AddModelError("", "La película ya existe");
+            //    return StatusCode(404, ModelState);
+            //}            
 
             var pelicula = _mapper.Map<Pelicula>(peliculaDto);
-
-            if (!_pelRepo.CrearPelicula(pelicula))
-            {
-                ModelState.AddModelError("", $"Algo salio mal guardando el registro{pelicula.Nombre}");
-                return StatusCode(500, ModelState);
-            }
+            _pelRepo.CreateMovieAsync(pelicula);
+            //if (!)
+            //{
+            //    ModelState.AddModelError("", $"Algo salio mal guardando el registro{pelicula.Nombre}");
+            //    return StatusCode(500, ModelState);
+            //}
 
             return CreatedAtRoute("GetPelicula", new { peliculaId = pelicula.Id }, pelicula);
         }
@@ -149,12 +150,12 @@ namespace TApiPeliculas.Controllers
 
 
             var pelicula = _mapper.Map<Pelicula>(peliculaDto);
-
-            if (!_pelRepo.UpdateMovieAsync(pelicula))
-            {
-                ModelState.AddModelError("", $"Algo salio mal actualizando el registro{pelicula.Nombre}");
-                return StatusCode(500, ModelState);
-            }
+            _pelRepo.UpdateMovieAsync(pelicula);
+            //if (!)
+            //{
+            //    ModelState.AddModelError("", $"Algo salio mal actualizando el registro{pelicula.Nombre}");
+            //    return StatusCode(500, ModelState);
+            //}
 
             return NoContent();
         }
@@ -165,18 +166,18 @@ namespace TApiPeliculas.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult BorrarPelicula(int peliculaId)
         {
-            if (!_pelRepo.ExistePelicula(peliculaId))
-            {
-                return NotFound();
-            }
+            //if (!_pelRepo.ExistePelicula(peliculaId))
+            //{
+            //    return NotFound();
+            //}
 
             var pelicula = _pelRepo.GetPelicula(peliculaId);
-
-            if (!_pelRepo.DeleteMovieAsync(pelicula))
-            {
-                ModelState.AddModelError("", $"Algo salio mal borrando el registro{pelicula.Nombre}");
-                return StatusCode(500, ModelState);
-            }
+            _pelRepo.DeleteMovieAsync(pelicula.Id);
+            //if (!)
+            //{
+            //    ModelState.AddModelError("", $"Algo salio mal borrando el registro{pelicula.Nombre}");
+            //    return StatusCode(500, ModelState);
+            //}
 
             return NoContent();
         }

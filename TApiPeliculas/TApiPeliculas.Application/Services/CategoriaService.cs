@@ -43,5 +43,10 @@ namespace TApiPeliculas.Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public Categoria GetCategoria(int id)
+        {
+            return _contenedorTrabajo.Categorias.Get(id);
+        }
     }
 }

@@ -40,7 +40,7 @@ namespace TApiPeliculas.Application.Services
             await _contenedorTrabajo.SaveChangesAsync();
         }
 
-        public IEnumerable<object> GetAllReque()
+        public IEnumerable<object> GetAllPeliculas()
         {
             return _contenedorTrabajo.Peliculas.GetPeliculas();
         }

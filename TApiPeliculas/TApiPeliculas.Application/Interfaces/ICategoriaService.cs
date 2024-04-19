@@ -12,7 +12,7 @@ namespace TApiPeliculas.Application.Interfaces
         Task CreateCategoryAsync(Categoria pel);
         Task UpdateCategoryAsync(Categoria pel);
         Task DeleteCategoryAsync(int id);
-
+        Categoria GetCategoria(int id);
         IEnumerable<object> GetAllCategories();
     }
 }

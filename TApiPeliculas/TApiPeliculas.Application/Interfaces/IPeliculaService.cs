@@ -12,7 +12,7 @@ namespace TApiPeliculas.Application.Interfaces
         Task CreateMovieAsync(Pelicula pel);
         Task UpdateMovieAsync(Pelicula pel);
         Task DeleteMovieAsync(int id);
-        IEnumerable<object> GetAllReque();
+        IEnumerable<object> GetAllPeliculas();
         Pelicula GetPelicula(int id);
     }
 }

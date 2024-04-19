@@ -15,12 +15,12 @@ namespace TApiPeliculas.Controllers
     public class CategoriasController : ControllerBase
     {
 
-        private readonly ICategoriaService _ctRepo;
+        private readonly ICategoriaService _ctCategoriaService;
         private readonly IMapper _mapper;
 
         public CategoriasController(ICategoriaService ctRepo, IMapper mapper)
         {
-            _ctRepo = ctRepo;
+            _ctCategoriaService = ctRepo;
             _mapper = mapper;
         }
 
@@ -33,7 +33,7 @@ namespace TApiPeliculas.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetCategorias()
         {
-            var listaCategorias = _ctRepo.GetCategorias();
+            var listaCategorias = _ctCategoriaService.GetAllCategories();
 
             var listaCategoriasDto = new List<CategoriaDto>();
 
@@ -61,7 +61,7 @@ namespace TApiPeliculas.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCategoria(int categoriaId)
         {
-            var itemCategoria = _ctRepo.GetCategoria(categoriaId);
+            var itemCategoria = _ctCategoriaService.GetCategoria(categoriaId);
 
             if (itemCategoria == null)
             {
@@ -79,7 +79,7 @@ namespace TApiPeliculas.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult CrearCategoria([FromBody] CrearCategoriaDto crearCategoriaDto)
+        public async Task<IActionResult> CrearCategoria([FromBody] CrearCategoriaDto crearCategoriaDto)
         {
             if (!ModelState.IsValid)
             {
@@ -90,19 +90,19 @@ namespace TApiPeliculas.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (_ctRepo.ExisteCategoria(crearCategoriaDto.Nombre))
-            {
-                ModelState.AddModelError("", "La categoría ya existe");
-                return StatusCode(404, ModelState);
-            }
+            //if (_ctCategoriaService.ExisteCategoria(crearCategoriaDto.Nombre))
+            //{
+            //    ModelState.AddModelError("", "La categoría ya existe");
+            //    return StatusCode(404, ModelState);
+            //}
 
             var categoria = _mapper.Map<Categoria>(crearCategoriaDto);
-
-            if (!_ctRepo.CrearCategoria(categoria))
-            {
-                ModelState.AddModelError("", $"Algo salio mal guardando el registro{categoria.Nombre}");
-                return StatusCode(500, ModelState);
-            }
+            await _ctCategoriaService.CreateCategoryAsync(categoria);
+            //if (!await _ctCategoriaService.CreateCategoryAsync(categoria))
+            //{
+            //    ModelState.AddModelError("", $"Algo salio mal guardando el registro{categoria.Nombre}");
+            //    return StatusCode(500, ModelState);
+            //}
 
             return CreatedAtRoute("GetCategoria", new { categoriaId = categoria.Id }, categoria);
         }
@@ -126,12 +126,12 @@ namespace TApiPeliculas.Controllers
             }
 
             var categoria = _mapper.Map<Categoria>(categoriaDto);
-
-            if (!_ctRepo.ActualizarCategoria(categoria))
-            {
-                ModelState.AddModelError("", $"Algo salio mal actualizando el registro{categoria.Nombre}");
-                return StatusCode(500, ModelState);
-            }
+            _ctCategoriaService.UpdateCategoryAsync(categoria);
+            //if (!_ctCategoriaService.UpdateCategoryAsync(categoria))
+            //{
+            //    ModelState.AddModelError("", $"Algo salio mal actualizando el registro{categoria.Nombre}");
+            //    return StatusCode(500, ModelState);
+            //}
 
             return NoContent();
         }
@@ -147,18 +147,18 @@ namespace TApiPeliculas.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult BorrarCategoria(int categoriaId)
         {
-            if (!_ctRepo.ExisteCategoria(categoriaId))
-            {
-                return NotFound();
-            }
+            //if (!_ctRepo.ExisteCategoria(categoriaId))
+            //{
+            //    return NotFound();
+            //}
 
-            var categoria = _ctRepo.GetCategoria(categoriaId);
-
-            if (!_ctRepo.BorrarCategoria(categoria))
-            {
-                ModelState.AddModelError("", $"Algo salio mal borrando el registro{categoria.Nombre}");
-                return StatusCode(500, ModelState);
-            }
+            var categoria = _ctCategoriaService.GetCategoria(categoriaId);
+            _ctCategoriaService.DeleteCategoryAsync(categoria.Id);
+            //if (!)
+            //{
+            //    ModelState.AddModelError("", $"Algo salio mal borrando el registro{categoria.Nombre}");
+            //    return StatusCode(500, ModelState);
+            //}
 
             return NoContent();
         }

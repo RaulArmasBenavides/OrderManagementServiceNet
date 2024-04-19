@@ -1,8 +1,9 @@
 ﻿using TApiPeliculas.Core.Entities;
+using TApiPeliculas.Infraestructure.Repository.IRepository;
 
 namespace TApiPeliculas.Core.IRepository
 {
-    public interface ICategoriaRepositorio
+    public interface ICategoriaRepositorio : IRepository<Categoria>
     {
         ICollection<Categoria> GetCategorias();
         Categoria GetCategoria(int CategoriaId);
