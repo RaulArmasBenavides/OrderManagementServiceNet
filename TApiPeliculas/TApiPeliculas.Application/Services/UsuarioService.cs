@@ -35,12 +35,12 @@ namespace TApiPeliculas.Application.Services
         }
         public AppUsuario GetUsuario(string id)
         {
-            throw new NotImplementedException();
+            return _contenedorTrabajo.Usuarios.GetUsuario(Convert.ToInt32(id));
         }
 
         public ICollection<AppUsuario> GetUsuarios()
         {
-            throw new NotImplementedException();
+            return _contenedorTrabajo.Usuarios.GetUsuarios();
         }
 
         public async Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto, string SecretKey)
@@ -83,9 +83,28 @@ namespace TApiPeliculas.Application.Services
             return usuarioLoginRespuestaDto;
         }
 
-        public Task<UsuarioDatosDto> Registro(UsuarioRegistroDto usuarioRegistroDto)
+        public async Task<UsuarioDatosDto> Registro(UsuarioRegistroDto usuarioRegistroDto)
         {
-            throw new NotImplementedException();
+            AppUsuario usuario = new AppUsuario()
+            {
+                UserName = usuarioRegistroDto.NombreUsuario,
+                Email = usuarioRegistroDto.NombreUsuario,
+                NormalizedEmail = usuarioRegistroDto.NombreUsuario.ToUpper(),
+                Nombre = usuarioRegistroDto.Nombre
+            };
+            var result = await _userManager.CreateAsync(usuario, usuarioRegistroDto.Password);
+            if (result.Succeeded)
+            {
+                if (!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult())
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("admin"));
+                    await _roleManager.CreateAsync(new IdentityRole("registrado"));
+                }
+                await _userManager.AddToRoleAsync(usuario, "admin");
+                var usuarioRetornado = _contenedorTrabajo.Usuarios.GetUsuarioByUserName(usuarioRegistroDto.NombreUsuario);
+                return _mapper.Map<UsuarioDatosDto>(usuarioRetornado);
+            }
+            return new UsuarioDatosDto();
         }
     }
 }

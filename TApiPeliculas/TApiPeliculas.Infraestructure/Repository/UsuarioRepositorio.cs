@@ -21,9 +21,9 @@ namespace TApiPeliculas.Repositorio
           
         }
 
-        public Usuario GetUsuario(int usuarioId)
+        public AppUsuario GetUsuario(int usuarioId)
         {
-            return _bd.Usuario.FirstOrDefault(c => c.Id == usuarioId);
+            return _bd.AppUsuario.FirstOrDefault(c => c.Id == usuarioId.ToString());
         }
 
         public AppUsuario GetUsuarioByUserName(string userName)
@@ -32,9 +32,9 @@ namespace TApiPeliculas.Repositorio
         }
 
 
-        public ICollection<Usuario> GetUsuarios()
+        public ICollection<AppUsuario> GetUsuarios()
         {
-            return _bd.Usuario.OrderBy(c => c.NombreUsuario).ToList();
+            return _bd.AppUsuario.OrderBy(c => c.Nombre).ToList();
         }
 
 
