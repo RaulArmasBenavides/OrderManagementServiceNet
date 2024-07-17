@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TApiPeliculas.Core\TApiPeliculas.Core.csproj" />
-    <ProjectReference Include="..\TApiPeliculas.Infraestructure\TApiPeliculas.Infraestructure.csproj" />
+    <ProjectReference Include="..\TApiPeliculas.Core\OrderManagementService.Core.csproj" />
+    <ProjectReference Include="..\TApiPeliculas.Infraestructure\OrderManagementService.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

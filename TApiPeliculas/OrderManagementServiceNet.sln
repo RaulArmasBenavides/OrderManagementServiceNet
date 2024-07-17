@@ -3,18 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TApiPeliculas", "TApiPeliculas\TApiPeliculas.csproj", "{068D92D9-5E7D-4787-A874-BE7C2C2839E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderManagementService", "TApiPeliculas\OrderManagementService.csproj", "{068D92D9-5E7D-4787-A874-BE7C2C2839E5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{565CBA15-2DDD-40BF-8409-196CD79AFE0B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TApiPeliculas.Application", "TApiPeliculas.Application\TApiPeliculas.Application.csproj", "{C496A0B2-CAD0-48D3-8D21-A7C5D366DE84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderManagementService.Application", "TApiPeliculas.Application\OrderManagementService.Application.csproj", "{C496A0B2-CAD0-48D3-8D21-A7C5D366DE84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TApiPeliculas.Core", "TApiPeliculas.Core\TApiPeliculas.Core.csproj", "{8C593803-BF97-442B-9343-AFA24F931A50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderManagementService.Core", "TApiPeliculas.Core\OrderManagementService.Core.csproj", "{8C593803-BF97-442B-9343-AFA24F931A50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TApiPeliculas.Infraestructure", "TApiPeliculas.Infraestructure\TApiPeliculas.Infraestructure.csproj", "{E5EFF072-FDFD-4A63-85B0-F8CBEB170060}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderManagementService.Infrastructure", "TApiPeliculas.Infraestructure\OrderManagementService.Infrastructure.csproj", "{E5EFF072-FDFD-4A63-85B0-F8CBEB170060}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

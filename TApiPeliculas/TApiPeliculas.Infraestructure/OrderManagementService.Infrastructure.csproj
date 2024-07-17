@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TApiPeliculas.Core\TApiPeliculas.Core.csproj" />
+    <ProjectReference Include="..\TApiPeliculas.Core\OrderManagementService.Core.csproj" />
   </ItemGroup>
 
 </Project>
