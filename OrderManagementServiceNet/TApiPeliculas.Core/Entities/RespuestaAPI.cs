@@ -1,16 +1,16 @@
-﻿using System.Net;
+using System.Net;
 
-namespace TApiPeliculas.Core.Entities
+namespace OrderManagementService.Core.Entities
 {
-    public class RespuestaAPI
+    public class ApiResponse
     {
-        public RespuestaAPI()
+        public ApiResponse()
         {
             ErrorMessages = new List<string>();
         }
         public HttpStatusCode StatusCode { get; set; }
         public bool IsSuccess { get; set; } = true;
         public List<string> ErrorMessages { get; set; }
-        public object Result { get; set; }
+        public object? Result { get; set; }
     }
 }

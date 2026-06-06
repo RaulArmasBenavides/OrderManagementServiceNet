@@ -1,110 +1,103 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using TApiPeliculas.Application.Dtos;
-using TApiPeliculas.Application.Interfaces;
-using TApiPeliculas.Core.Entities;
-using TApiPeliculas.Infraestructure.Repository.UnitOfWork;
-namespace TApiPeliculas.Application.Services
+using OrderManagementService.Application.Dtos;
+using OrderManagementService.Application.Interfaces;
+using OrderManagementService.Core.Entities;
+using OrderManagementService.Infrastructure.Repository.UnitOfWork;
+
+namespace OrderManagementService.Application.Services
 {
-    public class UsuarioService : IUsuarioService
+    public class UserService : IUserService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly UserManager<AppUsuario> _userManager;
-        private readonly IUnitOfWork _contenedorTrabajo;
-        private IConfiguration _config;
-
+        private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public UsuarioService(IUnitOfWork unitOfWork, IConfiguration config, UserManager<AppUsuario> userManager, IMapper mapper, RoleManager<IdentityRole> roleManager)
-        {
-            _userManager = userManager;
 
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper,
+            UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _contenedorTrabajo = unitOfWork;
             _userManager = userManager;
-            _config = config;
             _roleManager = roleManager;
         }
-        public AppUsuario GetUsuario(string id)
+
+        public async Task<ICollection<UserDto>> GetUsersAsync()
         {
-            return _contenedorTrabajo.Usuarios.GetUsuario(Convert.ToInt32(id));
+            var users = await _unitOfWork.Users.GetUsersAsync();
+            return _mapper.Map<ICollection<UserDto>>(users);
         }
 
-        public ICollection<AppUsuario> GetUsuarios()
+        public async Task<UserDto?> GetUserAsync(string id)
         {
-            return _contenedorTrabajo.Usuarios.GetUsuarios();
+            var user = await _unitOfWork.Users.GetUserAsync(id);
+            return user == null ? null : _mapper.Map<UserDto>(user);
         }
 
-        public async Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto, string SecretKey)
+        public async Task<LoginResponseDto> LoginAsync(LoginDto dto, string secretKey)
         {
-            var usuario = _contenedorTrabajo.Usuarios.GetUsuarioByUserName(usuarioLoginDto.NombreUsuario.ToLower());
-            bool isValid = await _userManager.CheckPasswordAsync(usuario, usuarioLoginDto.Password);
-            //Validamos si el usuario no existe con la combinación de usuario y contraseña correcta
-            if (usuario == null || !isValid )
-            {
-                //return null;
-                return new UsuarioLoginRespuestaDto()
-                {
-                    Token = "",
-                    Usuario = null
-                };
-            }
-            //Aquí existe el usuario entonces podemos procesar el login
-            var roles = await _userManager.GetRolesAsync(usuario);
-            var manejadorToken = new JwtSecurityTokenHandler();
+            var user = await _unitOfWork.Users.GetUserByUsernameAsync(dto.Username.ToLower());
+            if (user == null)
+                return new LoginResponseDto { Token = string.Empty };
 
+            bool isValid = await _userManager.CheckPasswordAsync(user, dto.Password);
+            if (!isValid)
+                return new LoginResponseDto { Token = string.Empty };
 
-            var key = Encoding.ASCII.GetBytes(SecretKey);
+            var roles = await _userManager.GetRolesAsync(user);
+            var key = Encoding.ASCII.GetBytes(secretKey);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new(ClaimTypes.Name, usuario.UserName.ToString()),
-                    new(ClaimTypes.Role, roles.FirstOrDefault())
+                    new(ClaimTypes.NameIdentifier, user.Id),
+                    new(ClaimTypes.Name, user.UserName!),
+                    new(ClaimTypes.Role, roles.FirstOrDefault() ?? string.Empty)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
-            var token = manejadorToken.CreateToken(tokenDescriptor);
-            UsuarioLoginRespuestaDto usuarioLoginRespuestaDto = new UsuarioLoginRespuestaDto()
-            {
-                Token = manejadorToken.WriteToken(token),
-                Usuario = _mapper.Map<UsuarioDatosDto>(usuario),
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.CreateToken(tokenDescriptor);
 
+            return new LoginResponseDto
+            {
+                Token = handler.WriteToken(token),
+                Role = roles.FirstOrDefault() ?? string.Empty,
+                User = _mapper.Map<UserDto>(user)
             };
-            return usuarioLoginRespuestaDto;
         }
 
-        public async Task<UsuarioDatosDto> Registro(UsuarioRegistroDto usuarioRegistroDto)
+        public async Task<UserDto?> RegisterAsync(RegisterDto dto)
         {
-            AppUsuario usuario = new AppUsuario()
+            var user = new AppUser
             {
-                UserName = usuarioRegistroDto.NombreUsuario,
-                Email = usuarioRegistroDto.NombreUsuario,
-                NormalizedEmail = usuarioRegistroDto.NombreUsuario.ToUpper(),
-                Nombre = usuarioRegistroDto.Nombre
+                UserName = dto.Username.ToLower(),
+                Email = dto.Username,
+                NormalizedEmail = dto.Username.ToUpper(),
+                FullName = dto.FullName
             };
-            var result = await _userManager.CreateAsync(usuario, usuarioRegistroDto.Password);
-            if (result.Succeeded)
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!result.Succeeded)
+                return null;
+
+            if (!await _roleManager.RoleExistsAsync("admin"))
             {
-                if (!_roleManager.RoleExistsAsync("admin").GetAwaiter().GetResult())
-                {
-                    await _roleManager.CreateAsync(new IdentityRole("admin"));
-                    await _roleManager.CreateAsync(new IdentityRole("registrado"));
-                }
-                await _userManager.AddToRoleAsync(usuario, "admin");
-                var usuarioRetornado = _contenedorTrabajo.Usuarios.GetUsuarioByUserName(usuarioRegistroDto.NombreUsuario);
-                return _mapper.Map<UsuarioDatosDto>(usuarioRetornado);
+                await _roleManager.CreateAsync(new IdentityRole("admin"));
+                await _roleManager.CreateAsync(new IdentityRole("registered"));
             }
-            return new UsuarioDatosDto();
+
+            var role = string.IsNullOrWhiteSpace(dto.Role) ? "registered" : dto.Role;
+            await _userManager.AddToRoleAsync(user, role);
+
+            var created = await _unitOfWork.Users.GetUserByUsernameAsync(dto.Username.ToLower());
+            return created == null ? null : _mapper.Map<UserDto>(created);
         }
     }
 }

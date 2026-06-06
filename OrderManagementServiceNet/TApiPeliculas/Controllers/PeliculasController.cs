@@ -1,183 +1,106 @@
-﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TApiPeliculas.Application.Dtos;
-using TApiPeliculas.Application.Interfaces;
-using TApiPeliculas.Application.Services;
-using TApiPeliculas.Core.Entities;
+using OrderManagementService.Application.Dtos;
+using OrderManagementService.Application.Interfaces;
 
-namespace TApiPeliculas.Controllers
+namespace OrderManagementService.Controllers
 {
-    [Route("api/Peliculas")]
+    [Route("api/products")]
     [ApiController]
-    public class PeliculasController : ControllerBase
+    public class ProductsController : ControllerBase
     {
-        private readonly IPeliculaService _pelRepo;
-        //private readonly IWebHostEnvironment _hostingEnvironment;
-        private readonly IMapper _mapper;
+        private readonly IProductService _productService;
 
-        public PeliculasController(IPeliculaService pelRepo, IMapper mapper, IWebHostEnvironment hostingEnvironment)
+        public ProductsController(IProductService productService)
         {
-            _pelRepo = pelRepo;
-            _mapper = mapper;
-            //_hostingEnvironment = hostingEnvironment;
+            _productService = productService;
         }
 
-        
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult GetPeliculas()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProducts()
         {
-            var listaPeliculas = _pelRepo.GetAllPeliculas();
-
-            var listaPeliculasDto = new List<PeliculaDto>();
-
-            foreach (var lista in listaPeliculas)
-            {
-                listaPeliculasDto.Add(_mapper.Map<PeliculaDto>(lista));
-            }
-            return Ok(listaPeliculasDto);
+            var products = await _productService.GetAllProductsAsync();
+            return Ok(products);
         }
 
-       
         [AllowAnonymous]
-        [HttpGet("{peliculaId:int}", Name = "GetPelicula")]
-        public IActionResult GetPelicula(int peliculaId)
+        [HttpGet("{id:int}", Name = "GetProduct")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProduct(int id)
         {
-            var itemPelicula = _pelRepo.GetPelicula(peliculaId);
-
-            if (itemPelicula == null)
-            {
+            var product = await _productService.GetProductAsync(id);
+            if (product == null)
                 return NotFound();
-            }
-
-            var itemPeliculaDto = _mapper.Map<PeliculaDto>(itemPelicula);
-            return Ok(itemPeliculaDto);
+            return Ok(product);
         }
 
-       
         [AllowAnonymous]
-        [HttpGet("GetPeliculasEnCategoria/{categoriaId:int}")]
-        public IActionResult GetPeliculasEnCategoria(int categoriaId)
+        [HttpGet("category/{categoryId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProductsByCategory(int categoryId)
         {
-            var listaPelicula = new List<object>();//_pelRepo.GetPeliculasEnCategoria(categoriaId);
-
-            if (listaPelicula == null)
-            {
-                return NotFound();
-            }
-
-            var itemPelicula = new List<PeliculaDto>();
-            foreach (var item in listaPelicula)
-            {
-                itemPelicula.Add(_mapper.Map<PeliculaDto>(item));
-            }
-
-            return Ok(itemPelicula);
+            var products = await _productService.GetProductsByCategoryAsync(categoryId);
+            return Ok(products);
         }
 
-       
         [AllowAnonymous]
-        [HttpGet("Buscar")]
-        public IActionResult Buscar(string nombre)
+        [HttpGet("search")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SearchProducts([FromQuery] string name)
         {
-            //try
-            //{
-            //    var resultado = _pelRepo.BuscarPelicula(nombre);
-            //    if (resultado.Any())
-            //    {
-            //        return Ok(resultado);
-            //    }
+            if (string.IsNullOrWhiteSpace(name))
+                return BadRequest("Search term is required");
 
-            //    return NotFound();
-            //}
-            //catch (Exception)
-            //{
-            //    return StatusCode(StatusCodes.Status500InternalServerError, "Error recuperando datos de la aplicación");
-            //}
-            return Ok();
+            var products = await _productService.SearchProductsAsync(name);
+            return Ok(products);
         }
 
         [Authorize(Roles = "admin")]
-        [HttpPost]       
-        [ProducesResponseType(201, Type = typeof(PeliculaDto))]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult CrearPelicula([FromForm] PeliculaDto peliculaDto)
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
-            if (peliculaDto == null)
-            {
-                return BadRequest(ModelState);
-            }
-
-            //if (_pelRepo.ExistePelicula(peliculaDto.Nombre))
-            //{
-            //    ModelState.AddModelError("", "La película ya existe");
-            //    return StatusCode(404, ModelState);
-            //}            
-
-            var pelicula = _mapper.Map<Pelicula>(peliculaDto);
-            _pelRepo.CreateMovieAsync(pelicula);
-            //if (!)
-            //{
-            //    ModelState.AddModelError("", $"Algo salio mal guardando el registro{pelicula.Nombre}");
-            //    return StatusCode(500, ModelState);
-            //}
-
-            return CreatedAtRoute("GetPelicula", new { peliculaId = pelicula.Id }, pelicula);
+            var created = await _productService.CreateProductAsync(dto);
+            return CreatedAtRoute("GetProduct", new { id = created.Id }, created);
         }
 
-
         [Authorize(Roles = "admin")]
-        [HttpPatch("{peliculaId:int}", Name = "ActualizarPelicula")]
-        [ProducesResponseType(204)]
+        [HttpPut("{id:int}", Name = "UpdateProduct")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult ActualizarPelicula(int peliculaId, [FromBody] PeliculaDto peliculaDto)
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] CreateProductDto dto)
         {
-            if (peliculaDto == null || peliculaId != peliculaDto.Id)
-            {
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            }
 
-
-            var pelicula = _mapper.Map<Pelicula>(peliculaDto);
-            _pelRepo.UpdateMovieAsync(pelicula);
-            //if (!)
-            //{
-            //    ModelState.AddModelError("", $"Algo salio mal actualizando el registro{pelicula.Nombre}");
-            //    return StatusCode(500, ModelState);
-            //}
+            var updated = await _productService.UpdateProductAsync(id, dto);
+            if (!updated)
+                return NotFound();
 
             return NoContent();
         }
 
-
         [Authorize(Roles = "admin")]
-        [HttpDelete("{peliculaId:int}", Name = "BorrarPelicula")]
+        [HttpDelete("{id:int}", Name = "DeleteProduct")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult BorrarPelicula(int peliculaId)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            //if (!_pelRepo.ExistePelicula(peliculaId))
-            //{
-            //    return NotFound();
-            //}
-
-            var pelicula = _pelRepo.GetPelicula(peliculaId);
-            _pelRepo.DeleteMovieAsync(pelicula.Id);
-            //if (!)
-            //{
-            //    ModelState.AddModelError("", $"Algo salio mal borrando el registro{pelicula.Nombre}");
-            //    return StatusCode(500, ModelState);
-            //}
+            var deleted = await _productService.DeleteProductAsync(id);
+            if (!deleted)
+                return NotFound();
 
             return NoContent();
         }

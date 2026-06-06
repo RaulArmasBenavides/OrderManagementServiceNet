@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using TApiPeliculas.Infraestructure.Repository.IRepository;
+using OrderManagementService.Core.IRepository;
 
-namespace TApiPeliculas.Infraestructure.Repository
+namespace OrderManagementService.Infrastructure.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
@@ -12,12 +12,12 @@ namespace TApiPeliculas.Infraestructure.Repository
         public Repository(DbContext context)
         {
             _context = context;
-            this._dbset = context.Set<T>();
+            _dbset = context.Set<T>();
         }
 
-        public void Add(T entity)
+        public async Task AddAsync(T entity)
         {
-            _dbset.Add(entity);
+            await _dbset.AddAsync(entity);
         }
 
         public void Update(T entity)
@@ -25,60 +25,55 @@ namespace TApiPeliculas.Infraestructure.Repository
             _dbset.Update(entity);
         }
 
-        public T Get(int id)
-        {
-            return _dbset.Find(id);
-        }
-
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
-        {
-            IQueryable<T> query = _dbset;
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-
-            }
-
-            if (includeProperties != null)
-            {
-                foreach (var inc in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(inc);
-                }
-
-            }
-
-            if (orderBy != null)
-            {
-                return orderBy(query).ToList();
-            }
-
-            return query.ToList();
-        }
-
-        public IEnumerable<object> GetAllSelectLoading()
-        {
-            throw new NotImplementedException();
-        }
-
-        public T GetFirstOrDefault(Expression<Func<T, bool>> filter = null, string includeProperties = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Remove(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Remove(T entity)
         {
             _dbset.Remove(entity);
         }
-        public bool Exists(Expression<Func<T, bool>> filter)
+
+        public async Task<T?> GetAsync(int id)
         {
-            return _dbset.Any(filter);
+            return await _dbset.FindAsync(id);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync(
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            string? includeProperties = null)
+        {
+            IQueryable<T> query = _dbset;
+
+            if (filter != null)
+                query = query.Where(filter);
+
+            if (includeProperties != null)
+                foreach (var prop in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    query = query.Include(prop.Trim());
+
+            if (orderBy != null)
+                return await orderBy(query).ToListAsync();
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<T?> GetFirstOrDefaultAsync(
+            Expression<Func<T, bool>>? filter = null,
+            string? includeProperties = null)
+        {
+            IQueryable<T> query = _dbset;
+
+            if (filter != null)
+                query = query.Where(filter);
+
+            if (includeProperties != null)
+                foreach (var prop in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    query = query.Include(prop.Trim());
+
+            return await query.FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> filter)
+        {
+            return await _dbset.AnyAsync(filter);
         }
     }
 }

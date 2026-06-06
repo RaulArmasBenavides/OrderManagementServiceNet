@@ -1,56 +1,37 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using System.Data;
-using TApiPeliculas.Core.Entities;
-using TApiPeliculas.Infraestructure.Repository.Data;
-using TApiPeliculas.Infraestructure.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
+using OrderManagementService.Core.Entities;
+using OrderManagementService.Core.IRepository;
+using OrderManagementService.Infrastructure.Repository.Data;
 
-namespace TApiPeliculas.Repositorio
+namespace OrderManagementService.Infrastructure.Repository
 {
-    public class UsuarioRepositorio : IUsuarioRepositorio
+    public class UserRepository : IUserRepository
     {
-        private readonly ApplicationDbContext _bd;
- 
- 
- 
-        public UsuarioRepositorio(ApplicationDbContext bd, IConfiguration config)
+        private readonly ApplicationDbContext _db;
+
+        public UserRepository(ApplicationDbContext db)
         {
-            _bd = bd;
-            
-            
-          
+            _db = db;
         }
 
-        public AppUsuario GetUsuario(int usuarioId)
+        public async Task<ICollection<AppUser>> GetUsersAsync()
         {
-            return _bd.AppUsuario.FirstOrDefault(c => c.Id == usuarioId.ToString());
+            return await _db.AppUsers.OrderBy(u => u.FullName).ToListAsync();
         }
 
-        public AppUsuario GetUsuarioByUserName(string userName)
+        public async Task<AppUser?> GetUserAsync(string id)
         {
-            return _bd.AppUsuario.FirstOrDefault(u => u.UserName == userName);
+            return await _db.AppUsers.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-
-        public ICollection<AppUsuario> GetUsuarios()
+        public async Task<AppUser?> GetUserByUsernameAsync(string username)
         {
-            return _bd.AppUsuario.OrderBy(c => c.Nombre).ToList();
+            return await _db.AppUsers.FirstOrDefaultAsync(u => u.UserName == username);
         }
 
-
-
-        public bool IsUniqueUser(string usuario)
+        public async Task<bool> IsUniqueUserAsync(string username)
         {
-            var usuariobd = _bd.AppUsuario.FirstOrDefault(u => u.UserName== usuario);
-            if (usuariobd == null)
-            {
-                return true;
-            }
-            return false;
+            return !await _db.AppUsers.AnyAsync(u => u.UserName == username);
         }
-
-        
-
- 
     }
 }

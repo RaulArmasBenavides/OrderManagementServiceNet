@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace TApiPeliculas.Application.Dtos
+namespace OrderManagementService.Application.Dtos
 {
-    public class CrearCategoriaDto
-    {        
-        //Esta validación es importante sino se crear vacía el nombre de categoría
-        [Required(ErrorMessage = "El nombre es obligatorio")]
-        [MaxLength(60, ErrorMessage = "El número máximo de caracteres es de 60!")]
-        public string Nombre { get; set; }        
+    public class CreateCategoryDto
+    {
+        [Required(ErrorMessage = "Name is required")]
+        [MaxLength(60, ErrorMessage = "Maximum 60 characters allowed")]
+        public string Name { get; set; } = string.Empty;
     }
 }

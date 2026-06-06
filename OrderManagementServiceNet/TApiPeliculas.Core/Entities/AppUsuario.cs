@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 
-namespace TApiPeliculas.Core.Entities
+namespace OrderManagementService.Core.Entities
 {
-    public class AppUsuario : IdentityUser
+    public class AppUser : IdentityUser
     {
-        public string Nombre { get; set; }
+        public string FullName { get; set; } = string.Empty;
     }
 }

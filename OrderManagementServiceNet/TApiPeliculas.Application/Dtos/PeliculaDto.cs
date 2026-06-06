@@ -1,27 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
-namespace TApiPeliculas.Application.Dtos
+namespace OrderManagementService.Application.Dtos
 {
-    public class PeliculaDto
+    public class ProductDto
     {
         public int Id { get; set; }
-        [Required(ErrorMessage = "El nombre es obligatorio")]
-        public string Nombre { get; set; }
-        public string RutaImagen { get; set; }
-
-        [Required(ErrorMessage = "La descripcion es obligatorio")]
-        public string Descripcion { get; set; }
-
-        [Required(ErrorMessage = "La duración es obligatoria")]
-        public int Duracion { get; set; }
-        public enum TipoClasificacion { Siete, Trece, Dieciseis, Dieciocho }
-        public TipoClasificacion Clasificacion { get; set; }
-
-        public DateTime FechaCreacion { get; set; }
-
-        public int categoriaId { get; set; }
-        //[ForeignKey("categoriaId")]
-        //public Categoria Categoria { get; set; }
+        [Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Price is required")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
+        public decimal Price { get; set; }
+        public int Stock { get; set; }
+        public int CategoryId { get; set; }
+        public string? CategoryName { get; set; }
     }
 }

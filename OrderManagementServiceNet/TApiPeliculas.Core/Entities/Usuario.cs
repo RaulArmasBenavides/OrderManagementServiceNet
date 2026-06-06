@@ -1,14 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TApiPeliculas.Core.Entities
+namespace OrderManagementService.Core.Entities
 {
-    public class Usuario
-    {
-        [Key]
-        public int Id { get; set; }
-        public string NombreUsuario { get; set; }
-        public string Nombre { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
-    }
+    public enum OrderStatus { Pending, Processing, Shipped, Delivered, Cancelled }
 }

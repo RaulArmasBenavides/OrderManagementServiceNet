@@ -1,25 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TApiPeliculas.Core.IRepository;
-using TApiPeliculas.Infraestructure.Repository.IRepository;
+using OrderManagementService.Core.IRepository;
 
-namespace TApiPeliculas.Infraestructure.Repository.UnitOfWork
+namespace OrderManagementService.Infrastructure.Repository.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
-       
-            ICategoriaRepositorio Categorias { get; }
-
-            IPeliculaRepositorio Peliculas { get; }
-
-            IUsuarioRepositorio Usuarios { get; }
-
-            void Save();
-
-            Task<int> SaveChangesAsync();
-        
+        ICategoryRepository Categories { get; }
+        IProductRepository Products { get; }
+        IOrderRepository Orders { get; }
+        IUserRepository Users { get; }
+        Task<int> SaveChangesAsync();
     }
 }

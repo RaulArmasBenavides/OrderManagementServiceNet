@@ -1,14 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
-namespace TApiPeliculas.Application.Dtos
+namespace OrderManagementService.Application.Dtos
 {
-    public class UsuarioDatosDto
+    public class CreateProductDto
     {
-        public string ID { get; set; }
-        public string Username { get; set; }
-        public string Nombre { get; set; }        
+        [Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Price is required")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
+        public decimal Price { get; set; }
+        [Range(0, int.MaxValue)]
+        public int Stock { get; set; }
+        [Required(ErrorMessage = "CategoryId is required")]
+        public int CategoryId { get; set; }
     }
 }

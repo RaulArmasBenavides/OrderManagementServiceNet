@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
- 
-
-namespace TApiPeliculas.Application.Dtos
+namespace OrderManagementService.Application.Dtos
 {
-    public class UsuarioLoginRespuestaDto
+    public class LoginResponseDto
     {
-        
-        public UsuarioDatosDto Usuario { get; set; }
-        public string Role { get; set; }
-        public string Token { get; set; }
+        public UserDto? User { get; set; }
+        public string Role { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
     }
 }

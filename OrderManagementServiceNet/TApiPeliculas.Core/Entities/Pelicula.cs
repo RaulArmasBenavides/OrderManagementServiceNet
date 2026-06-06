@@ -1,22 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TApiPeliculas.Core.Entities
+namespace OrderManagementService.Core.Entities
 {
-    public class Pelicula
+    public class Product
     {
+        [Key]
         public int Id { get; set; }
-        public string Nombre { get; set; }
-
-        public string RutaImagen { get; set; }
-        public string Descripcion { get; set; }
-        public int Duracion { get; set; }
-        public enum TipoClasificacion { Siete, Trece, Dieciseis, Dieciocho }
-        public TipoClasificacion Clasificacion { get; set; }
-        public DateTime FechaCreacion { get; set; }
-
-        public int categoriaId { get; set; }
-        [ForeignKey("categoriaId")]
-        public Categoria Categoria { get; set; }
+        [Required]
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        [Required]
+        public decimal Price { get; set; }
+        public int Stock { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; } = null!;
     }
 }

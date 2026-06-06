@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace TApiPeliculas.Application.Dtos
+namespace OrderManagementService.Application.Dtos
 {
-    public class UsuarioLoginDto
+    public class LoginDto
     {
-        [Required(ErrorMessage = "El usuario es obligatorio")]
-        public string NombreUsuario { get; set; }
-        [Required(ErrorMessage = "El password es obligatorio")]       
-        public string Password { get; set; }
+        [Required(ErrorMessage = "Username is required")]
+        public string Username { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Password is required")]
+        public string Password { get; set; } = string.Empty;
     }
 }

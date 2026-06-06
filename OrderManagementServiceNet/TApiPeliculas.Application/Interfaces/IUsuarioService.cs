@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TApiPeliculas.Application.Dtos;
-using TApiPeliculas.Core.Entities;
+using OrderManagementService.Application.Dtos;
 
-namespace TApiPeliculas.Application.Interfaces
+namespace OrderManagementService.Application.Interfaces
 {
-    public interface IUsuarioService
+    public interface IUserService
     {
-        Task<UsuarioDatosDto> Registro(UsuarioRegistroDto usuarioRegistroDto);
-
-        Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto, string SecretKey);
-
-        ICollection<AppUsuario> GetUsuarios();
-
-        AppUsuario GetUsuario(string id);
+        Task<ICollection<UserDto>> GetUsersAsync();
+        Task<UserDto?> GetUserAsync(string id);
+        Task<UserDto?> RegisterAsync(RegisterDto dto);
+        Task<LoginResponseDto> LoginAsync(LoginDto dto, string secretKey);
     }
 }

@@ -1,14 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace TApiPeliculas.Core.Entities
-{ 
-    public class Categoria
+namespace OrderManagementService.Core.Entities
+{
+    public class Category
     {
         [Key]
         public int Id { get; set; }
         [Required]
-        public string Nombre { get; set; }
-        [Required]
-        public DateTime FechaCreacion { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
     }
 }

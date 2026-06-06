@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace TApiPeliculas.Controllers
+namespace OrderManagementService.Controllers
 {
     [Route("api/Math")]
     [ApiController]

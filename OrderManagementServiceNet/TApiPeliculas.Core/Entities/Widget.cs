@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TApiPeliculas.Core.Entities
+namespace OrderManagementService.Core.Entities
 {
-    public class Widget : DynamicObject
+    public class Order
     {
-        public override bool TryGetMember(GetMemberBinder binder, out object? result)
-        {
-            result = binder.Name;
-            return true;
-        }
-        public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object? result)
-        {
-            if(indexes.Length == 1)
-            {
-                result = new string ('*',(int)indexes[0]);
-            }
-            return base.TryGetIndex(binder, indexes, out result);
-        }
+        [Key]
+        public int Id { get; set; }
+        [Required]
+        public string OrderNumber { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
+        [ForeignKey("UserId")]
+        public AppUser User { get; set; } = null!;
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }

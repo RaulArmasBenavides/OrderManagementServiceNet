@@ -1,52 +1,60 @@
-﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TApiPeliculas.Application.Interfaces;
-using TApiPeliculas.Core.Entities;
-using TApiPeliculas.Infraestructure.Repository.UnitOfWork;
+using AutoMapper;
+using OrderManagementService.Application.Dtos;
+using OrderManagementService.Application.Interfaces;
+using OrderManagementService.Core.Entities;
+using OrderManagementService.Infrastructure.Repository.UnitOfWork;
 
-namespace TApiPeliculas.Application.Services
+namespace OrderManagementService.Application.Services
 {
-    public class CategoriaService : ICategoriaService
+    public class CategoryService : ICategoryService
     {
-
-        private readonly IUnitOfWork _contenedorTrabajo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CategoriaService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _contenedorTrabajo = unitOfWork;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task CreateCategoryAsync(Categoria cat)
+
+        public async Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync()
         {
-            _contenedorTrabajo.Categorias.Add(cat);
-            await _contenedorTrabajo.SaveChangesAsync();
+            var categories = await _unitOfWork.Categories.GetCategoriesAsync();
+            return _mapper.Map<IEnumerable<CategoryDto>>(categories);
         }
 
-        public async Task DeleteCategoryAsync(int id)
+        public async Task<CategoryDto?> GetCategoryAsync(int id)
         {
-            _contenedorTrabajo.Categorias.Remove(id);
-            await _contenedorTrabajo.SaveChangesAsync();
+            var category = await _unitOfWork.Categories.GetAsync(id);
+            return category == null ? null : _mapper.Map<CategoryDto>(category);
         }
 
-        public async Task UpdateCategoryAsync(Categoria cat)
+        public async Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto dto)
         {
-            _contenedorTrabajo.Categorias.Update(cat);
-            await _contenedorTrabajo.SaveChangesAsync();
+            var category = _mapper.Map<Category>(dto);
+            category.CreatedAt = DateTime.UtcNow;
+            await _unitOfWork.Categories.AddAsync(category);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<CategoryDto>(category);
         }
 
-        public IEnumerable<object> GetAllCategories()
+        public async Task<bool> UpdateCategoryAsync(int id, CategoryDto dto)
         {
-            throw new NotImplementedException();
+            var category = await _unitOfWork.Categories.GetAsync(id);
+            if (category == null) return false;
+            _mapper.Map(dto, category);
+            _unitOfWork.Categories.Update(category);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
 
-        public Categoria GetCategoria(int id)
+        public async Task<bool> DeleteCategoryAsync(int id)
         {
-            return _contenedorTrabajo.Categorias.Get(id);
+            var category = await _unitOfWork.Categories.GetAsync(id);
+            if (category == null) return false;
+            _unitOfWork.Categories.Remove(category);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
     }
 }

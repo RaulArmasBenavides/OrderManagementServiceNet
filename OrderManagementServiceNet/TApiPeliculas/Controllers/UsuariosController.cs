@@ -1,116 +1,88 @@
-﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using TApiPeliculas.Application.Dtos;
-using TApiPeliculas.Application.Interfaces;
-using TApiPeliculas.Core.Entities;
+using OrderManagementService.Application.Dtos;
+using OrderManagementService.Application.Interfaces;
+using OrderManagementService.Core.Entities;
 
-namespace TApiPeliculas.Controllers
+namespace OrderManagementService.Controllers
 {
-    [Route("api/Usuarios")]   
-    [ApiController] 
-    public class UsuariosController : ControllerBase
+    [Route("api/users")]
+    [ApiController]
+    public class UsersController : ControllerBase
     {
+        private readonly IUserService _userService;
+        private readonly IConfiguration _config;
 
-        private readonly IUsuarioService _usRepo;
-        protected RespuestaAPI _respuestaApi;
-        private IConfiguration _config;
-        private readonly IMapper _mapper;
-
-        public UsuariosController(IUsuarioService usRepo, IMapper mapper)
+        public UsersController(IUserService userService, IConfiguration config)
         {
-            _usRepo = usRepo;
-            this._respuestaApi = new();
-            _mapper = mapper;
+            _userService = userService;
+            _config = config;
         }
 
-
         [Authorize(Roles = "admin")]
-        [HttpGet]       
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetUsuarios()
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetUsers()
         {
-            var listaUsuarios = _usRepo.GetUsuarios();
-
-            var listaUsuariosDto = new List<UsuarioDto>();
-
-            foreach (var lista in listaUsuarios)
-            {
-                listaUsuariosDto.Add(_mapper.Map<UsuarioDto>(lista));
-            }
-            return Ok(listaUsuariosDto);
+            var users = await _userService.GetUsersAsync();
+            return Ok(users);
         }
 
         [Authorize(Roles = "admin")]
-        [HttpGet("{usuarioId:int}", Name = "GetUsuario")]
-        public IActionResult GetUsuario(int usuarioId)
+        [HttpGet("{id}", Name = "GetUser")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetUser(string id)
         {
-            var itemUsuario = _usRepo.GetUsuario(usuarioId.ToString());
-
-            if (itemUsuario == null)
-            {
+            var user = await _userService.GetUserAsync(id);
+            if (user == null)
                 return NotFound();
-            }
-
-            var itemUsuarioDto = _mapper.Map<UsuarioDto>(itemUsuario);
-            return Ok(itemUsuarioDto);
+            return Ok(user);
         }
 
-
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [HttpPost("login")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Login([FromBody] UsuarioLoginDto usuarioLoginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            var respuestaLogin = await _usRepo.Login(usuarioLoginDto, _config.GetValue<string>("ApiSettings:Secreta"));
-            if (respuestaLogin.Usuario == null || string.IsNullOrEmpty(respuestaLogin.Token))
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var secretKey = _config.GetValue<string>("ApiSettings:Secreta")!;
+            var response = await _userService.LoginAsync(dto, secretKey);
+
+            if (response.User == null || string.IsNullOrEmpty(response.Token))
             {
-                _respuestaApi.StatusCode = HttpStatusCode.BadRequest;
-                _respuestaApi.IsSuccess = false;
-                _respuestaApi.ErrorMessages.Add("El nombre de usuario o password son incorrectos");
-                return BadRequest(_respuestaApi);
-                
+                var apiResponse = new ApiResponse { StatusCode = HttpStatusCode.BadRequest, IsSuccess = false };
+                apiResponse.ErrorMessages.Add("Invalid username or password");
+                return BadRequest(apiResponse);
             }
-            _respuestaApi.StatusCode = HttpStatusCode.OK;
-            _respuestaApi.IsSuccess = true;
-            _respuestaApi.Result = respuestaLogin;
-            return Ok(_respuestaApi);
+
+            return Ok(response);
         }
 
-
-        [HttpPost("registro")]
+        [AllowAnonymous]
+        [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
-        public async Task<IActionResult> Registro([FromBody] UsuarioRegistroDto usuarioRegistroDto)
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var rptaservice = await _usRepo.Registro(usuarioRegistroDto);
-            //bool validarNombreUsuarioUnico = _usRepo.IsUniqueUser(usuarioRegistroDto.NombreUsuario);
-            //if (!validarNombreUsuarioUnico)
-            //{
-            //    _respuestaApi.StatusCode = HttpStatusCode.BadRequest;
-            //    _respuestaApi.IsSuccess = false;
-            //    _respuestaApi.ErrorMessages.Add("El nombre de usuario ya existe");
-            //    return BadRequest(_respuestaApi);
-            //}
+            var user = await _userService.RegisterAsync(dto);
+            if (user == null)
+            {
+                var apiResponse = new ApiResponse { StatusCode = HttpStatusCode.BadRequest, IsSuccess = false };
+                apiResponse.ErrorMessages.Add("Registration failed. Username may already exist.");
+                return BadRequest(apiResponse);
+            }
 
-            //var usuario = await _usRepo.Registro(usuarioRegistroDto);
-            //if (usuario == null) 
-            //{
-            //    _respuestaApi.StatusCode = HttpStatusCode.BadRequest;
-            //    _respuestaApi.IsSuccess = false;
-            //    _respuestaApi.ErrorMessages.Add("Error en el registro");
-            //    return BadRequest(_respuestaApi);
-            //}
-
-            //_respuestaApi.StatusCode = HttpStatusCode.OK;
-            //_respuestaApi.IsSuccess = true;
-            return Ok(rptaservice);
+            return CreatedAtRoute("GetUser", new { id = user.Id }, user);
         }
     }
 }

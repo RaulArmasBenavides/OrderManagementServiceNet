@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TApiPeliculas.Core.Entities;
+using OrderManagementService.Application.Dtos;
 
-namespace TApiPeliculas.Application.Interfaces
+namespace OrderManagementService.Application.Interfaces
 {
-    public interface IPeliculaService
+    public interface IProductService
     {
-        Task CreateMovieAsync(Pelicula pel);
-        Task UpdateMovieAsync(Pelicula pel);
-        Task DeleteMovieAsync(int id);
-        IEnumerable<object> GetAllPeliculas();
-        Pelicula GetPelicula(int id);
+        Task<IEnumerable<ProductDto>> GetAllProductsAsync();
+        Task<ProductDto?> GetProductAsync(int id);
+        Task<IEnumerable<ProductDto>> GetProductsByCategoryAsync(int categoryId);
+        Task<IEnumerable<ProductDto>> SearchProductsAsync(string name);
+        Task<ProductDto> CreateProductAsync(CreateProductDto dto);
+        Task<bool> UpdateProductAsync(int id, CreateProductDto dto);
+        Task<bool> DeleteProductAsync(int id);
     }
 }

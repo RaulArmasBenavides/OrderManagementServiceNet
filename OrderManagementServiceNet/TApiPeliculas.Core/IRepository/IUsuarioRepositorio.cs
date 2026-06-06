@@ -1,16 +1,12 @@
-﻿
+using OrderManagementService.Core.Entities;
 
-using TApiPeliculas.Core.Entities;
-
-namespace TApiPeliculas.Infraestructure.Repository.IRepository
+namespace OrderManagementService.Core.IRepository
 {
-    public interface IUsuarioRepositorio
+    public interface IUserRepository
     {
-        ICollection<AppUsuario> GetUsuarios();
-        AppUsuario GetUsuario(int usuarioId);
-        bool IsUniqueUser(string usuario);
-        //Task<UsuarioLoginRespuestaDto> Login(UsuarioLoginDto usuarioLoginDto);
-        //Task<UsuarioDatosDto> Registro(UsuarioRegistroDto usuarioRegistroDto);
-        AppUsuario GetUsuarioByUserName(string userName);
+        Task<ICollection<AppUser>> GetUsersAsync();
+        Task<AppUser?> GetUserAsync(string id);
+        Task<AppUser?> GetUserByUsernameAsync(string username);
+        Task<bool> IsUniqueUserAsync(string username);
     }
 }

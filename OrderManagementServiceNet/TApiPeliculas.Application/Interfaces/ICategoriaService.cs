@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TApiPeliculas.Core.Entities;
+using OrderManagementService.Application.Dtos;
 
-namespace TApiPeliculas.Application.Interfaces
+namespace OrderManagementService.Application.Interfaces
 {
-    public interface ICategoriaService
+    public interface ICategoryService
     {
-        Task CreateCategoryAsync(Categoria pel);
-        Task UpdateCategoryAsync(Categoria pel);
-        Task DeleteCategoryAsync(int id);
-        Categoria GetCategoria(int id);
-        IEnumerable<object> GetAllCategories();
+        Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync();
+        Task<CategoryDto?> GetCategoryAsync(int id);
+        Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto dto);
+        Task<bool> UpdateCategoryAsync(int id, CategoryDto dto);
+        Task<bool> DeleteCategoryAsync(int id);
     }
 }

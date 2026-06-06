@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace TApiPeliculas.Application.Dtos
+namespace OrderManagementService.Application.Dtos
 {
-    public class UsuarioDto
+    public class UserDto
     {
-        public int Id { get; set; }
-        public string NombreUsuario { get; set; }
-        public string Nombre { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
+        public string Id { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
     }
 }

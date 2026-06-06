@@ -1,58 +1,72 @@
-﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TApiPeliculas.Application.Interfaces;
-using TApiPeliculas.Core.Entities;
-using TApiPeliculas.Infraestructure.Repository.UnitOfWork;
+using AutoMapper;
+using OrderManagementService.Application.Dtos;
+using OrderManagementService.Application.Interfaces;
+using OrderManagementService.Core.Entities;
+using OrderManagementService.Infrastructure.Repository.UnitOfWork;
 
-namespace TApiPeliculas.Application.Services
+namespace OrderManagementService.Application.Services
 {
-    public class PeliculaService : IPeliculaService
+    public class ProductService : IProductService
     {
-        private readonly IUnitOfWork _contenedorTrabajo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public PeliculaService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ProductService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _contenedorTrabajo = unitOfWork;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public async Task CreateMovieAsync(Pelicula pel)
+        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
-            _contenedorTrabajo.Peliculas.Add(pel);
-            //_contenedorTrabajo.Save();
-            await _contenedorTrabajo.SaveChangesAsync();
+            var products = await _unitOfWork.Products.GetProductsAsync();
+            return _mapper.Map<IEnumerable<ProductDto>>(products);
         }
 
-        public async Task UpdateMovieAsync(Pelicula pel)
+        public async Task<ProductDto?> GetProductAsync(int id)
         {
-            _contenedorTrabajo.Peliculas.Update(pel);
-            await _contenedorTrabajo.SaveChangesAsync();
+            var product = await _unitOfWork.Products.GetAsync(id);
+            return product == null ? null : _mapper.Map<ProductDto>(product);
         }
 
-        public async Task DeleteMovieAsync(int id)
+        public async Task<IEnumerable<ProductDto>> GetProductsByCategoryAsync(int categoryId)
         {
-            _contenedorTrabajo.Peliculas.Remove(id);
-            await _contenedorTrabajo.SaveChangesAsync();
+            var products = await _unitOfWork.Products.GetProductsByCategoryAsync(categoryId);
+            return _mapper.Map<IEnumerable<ProductDto>>(products);
         }
 
-        public IEnumerable<object> GetAllPeliculas()
+        public async Task<IEnumerable<ProductDto>> SearchProductsAsync(string name)
         {
-            return _contenedorTrabajo.Peliculas.GetPeliculas();
+            var products = await _unitOfWork.Products.SearchProductsAsync(name);
+            return _mapper.Map<IEnumerable<ProductDto>>(products);
         }
 
-
-        public Pelicula GetPelicula(int id)
+        public async Task<ProductDto> CreateProductAsync(CreateProductDto dto)
         {
-            return _contenedorTrabajo.Peliculas.Get(id);
+            var product = _mapper.Map<Product>(dto);
+            product.CreatedAt = DateTime.UtcNow;
+            await _unitOfWork.Products.AddAsync(product);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<ProductDto>(product);
         }
-        public bool ExistePelicula(int id)
+
+        public async Task<bool> UpdateProductAsync(int id, CreateProductDto dto)
         {
-            return _contenedorTrabajo.Peliculas.Exists(movie => movie.Id == id);
+            var product = await _unitOfWork.Products.GetAsync(id);
+            if (product == null) return false;
+            _mapper.Map(dto, product);
+            _unitOfWork.Products.Update(product);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteProductAsync(int id)
+        {
+            var product = await _unitOfWork.Products.GetAsync(id);
+            if (product == null) return false;
+            _unitOfWork.Products.Remove(product);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
     }
 }

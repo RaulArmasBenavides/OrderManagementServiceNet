@@ -1,18 +1,11 @@
-﻿
+using OrderManagementService.Core.Entities;
 
-using TApiPeliculas.Core.Entities;
-
-namespace TApiPeliculas.Infraestructure.Repository.IRepository
+namespace OrderManagementService.Core.IRepository
 {
-    public interface IPeliculaRepositorio : IRepository<Pelicula>
+    public interface IProductRepository : IRepository<Product>
     {
-        ICollection<Pelicula> GetPeliculas();
-        ICollection<Pelicula> GetPeliculasEnCategoria(int CatId);
-        Pelicula GetPelicula(int PeliculaId);
-        IEnumerable<Pelicula> BuscarPelicula(string nombre);
-        bool CrearPelicula(Pelicula pelicula);
-        bool ActualizarPelicula(Pelicula pelicula);
-        bool BorrarPelicula(Pelicula pelicula);
-        bool Guardar();
+        Task<ICollection<Product>> GetProductsAsync();
+        Task<ICollection<Product>> GetProductsByCategoryAsync(int categoryId);
+        Task<IEnumerable<Product>> SearchProductsAsync(string name);
     }
 }

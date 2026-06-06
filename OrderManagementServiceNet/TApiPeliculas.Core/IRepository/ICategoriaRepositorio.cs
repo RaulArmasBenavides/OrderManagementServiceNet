@@ -1,15 +1,9 @@
-﻿using TApiPeliculas.Core.Entities;
-using TApiPeliculas.Infraestructure.Repository.IRepository;
+using OrderManagementService.Core.Entities;
 
-namespace TApiPeliculas.Core.IRepository
+namespace OrderManagementService.Core.IRepository
 {
-    public interface ICategoriaRepositorio : IRepository<Categoria>
+    public interface ICategoryRepository : IRepository<Category>
     {
-        ICollection<Categoria> GetCategorias();
-        Categoria GetCategoria(int CategoriaId);
-        bool CrearCategoria(Categoria categoria);
-        bool ActualizarCategoria(Categoria categoria);
-        bool BorrarCategoria(Categoria categoria);
-        bool Guardar();
+        Task<ICollection<Category>> GetCategoriesAsync();
     }
 }
