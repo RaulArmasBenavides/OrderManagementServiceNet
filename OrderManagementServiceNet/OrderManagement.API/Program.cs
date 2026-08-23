@@ -11,8 +11,17 @@ using OrderManagementService.Infrastructure.Repository.UnitOfWork;
 using OrderManagementService.Application.Interfaces;
 using OrderManagementService.Application.Services;
 using OrderManagementService.Mappers;
+using OrderManagementService.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddLogging(config =>
+{
+    config.ClearProviders();
+    config.AddConsole();
+    config.AddDebug();
+    config.SetMinimumLevel(builder.Environment.IsDevelopment() ? LogLevel.Debug : LogLevel.Information);
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSql")));
@@ -44,14 +53,21 @@ builder.Services.AddAuthentication(x =>
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey)),
-        ValidateIssuer = false,
-        ValidateAudience = false
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration.GetValue<string>("ApiSettings:Issuer") ?? "OrderManagementAPI",
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration.GetValue<string>("ApiSettings:Audience") ?? "OrderManagementClients",
+        ValidateLifetime = true
     };
 });
 
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? ["http://localhost:3000", "http://localhost:4200"];
 builder.Services.AddCors(p => p.AddPolicy("PolicyCors", build =>
 {
-    build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+    build.WithOrigins(allowedOrigins)
+         .AllowAnyMethod()
+         .AllowAnyHeader()
+         .AllowCredentials();
 }));
 
 builder.Services.AddControllers(options =>
@@ -87,6 +103,8 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -98,5 +116,8 @@ app.UseCors("PolicyCors");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Order Management API iniciada en {Environment}", app.Environment.EnvironmentName);
 
 app.Run();

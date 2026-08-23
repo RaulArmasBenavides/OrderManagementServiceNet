@@ -12,6 +12,13 @@ namespace OrderManagementService.Core.IRepository
         Task<T?> GetFirstOrDefaultAsync(
             Expression<Func<T, bool>>? filter = null,
             string? includeProperties = null);
+        Task<IEnumerable<T>> GetAllAsync(
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            params Expression<Func<T, object>>[]? includes);
+        Task<T?> GetFirstOrDefaultAsync(
+            Expression<Func<T, bool>>? filter = null,
+            params Expression<Func<T, object>>[]? includes);
         Task AddAsync(T entity);
         void Update(T entity);
         void Remove(T entity);
